@@ -86,8 +86,7 @@ def GetContent():
     aurl = requests.get(ar_url)
     asoup = BeautifulSoup(aurl.text,"html.parser")
     CONTENT = asoup.find(id='main-container').text
-    file.write(ar_url+CONTENT)
-    return ar_url,CONTENT
+    return file.write(ar_url+CONTENT)
     
 task = 'continue'
 with open(f"ptt{board}_{target}.txt",'w',encoding='utf-8') as file: 
@@ -112,7 +111,8 @@ with open(f"ptt{board}_{target}.txt",'w',encoding='utf-8') as file:
         else:
             print('task ',task)
             break
-
+            
+# ----------------------------------------------
 
 # ### 可輸入關鍵字找全部頁面
 
@@ -132,8 +132,7 @@ def GetContent():
     aurl = requests.get(ar_url)
     asoup = BeautifulSoup(aurl.text,"html.parser")
     CONTENT = asoup.find(id='main-container').text
-    file.write(ar_url+CONTENT)
-    return ar_url,CONTENT
+    return file.write(ar_url+CONTENT)
 
 with open(f"ptt{board}_{target}.txt",'w',encoding='utf-8') as file: 
     for page in range(pages):
