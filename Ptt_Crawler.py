@@ -1,17 +1,9 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# <H1>PTT標題</H1>
-
-# In[104]:
-
+#輸入版名及頁數
 
 board = input("輸入英文版名:")
 pages = input("查詢頁數")
 
-
-# In[ ]:
-
+# 所有文章標題輸出至 ptt{board}.txt
 
 import requests
 from bs4 import BeautifulSoup
@@ -34,11 +26,7 @@ with open(f"ptt{board}.csv",'w',encoding='utf-8-sig') as file:
         print(f'搜尋第{page+1}頁',end=' ')
 
 
-# <h1>印出所有標題</h1>
-# 輸出至 ptt{board}.txt
-
-# In[89]:
-
+# 資料清理
 
 import pandas as pd
 df = pd.read_csv(f"ptt{board}.csv",header=None,delimiter='\\t')
@@ -47,13 +35,10 @@ pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
 
 
-# <h1>關鍵字</h1>
+# 關鍵字找標題
 # 輸出至 ptt{board}_{key}.txt
 
 # #### 複合關鍵字，空格隔開
-
-# In[102]:
-
 
 import pandas as pd
 import numpy as np
@@ -72,9 +57,7 @@ with open(f"ptt{board}_{keys}.csv",'w',encoding='utf-8-sig') as file:
 file.close()
 print(results)
 
-
-# In[103]:
-
+#單關鍵字
 
 import pandas as pd
 import numpy as np
@@ -92,14 +75,10 @@ print(result)
 print("共%d筆"%len(result))
 
 
-# <h1>看指定文章</h1>
+# 看指定文章
 
 # ### 可輸入關鍵字但只顯示同關鍵字最先的一篇
-# 
 # 輸出至 ptt{board}_{target}.txt
-
-# In[18]:
-
 
 import requests
 from bs4 import BeautifulSoup
@@ -142,9 +121,6 @@ with open(f"ptt{board}_{target}.txt",'w',encoding='utf-8') as file:
 
 
 # ### 可輸入關鍵字找全部頁面
-
-# In[ ]:
-
 
 import requests
 from bs4 import BeautifulSoup
