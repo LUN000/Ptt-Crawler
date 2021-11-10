@@ -16,7 +16,16 @@ pages = input("查詢頁數")
 import requests
 from bs4 import BeautifulSoup
 
-pages = eval(pages)
+def get_agree(pages,r,soup):
+    button = soup.select('input')
+    agree = button[0]["value"]
+    agree_url = 'https://www.ptt.cc' + agree
+    url = agree_url
+    print(url)
+
+
+    
+pages = int(pages)
 url = f"https://www.ptt.cc/bbs/{board}/index.html"
 requests.get(url)
 
@@ -45,6 +54,7 @@ df = pd.read_csv(f"ptt{board}.csv",header=None,delimiter='\\t',encoding='utf-8-s
 pd.set_option('display.max_rows', None)
 pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
+df.to_csv(f"ptt{board}.csv", encoding="utf_8_sig",header=False, index=False)
 
 
 # <h1>關鍵字</h1>
@@ -59,18 +69,25 @@ import pandas as pd
 import numpy as np
 
 keys = list(input("請輸入關鍵字以空白間隔:").split(" "))
-results = []
-
 for key in keys:
     mask = df[0].str.contains(key)
-    results.append(df[mask])
+    df[mask].to_csv(f'ptt{board}_{key}.csv',encoding='utf-8-sig',header=['標題'])
+    with open(f"ptt{board}_{key}.csv",'a',encoding='utf-8-sig') as file:
+        file.write("共%d筆"%len(df[mask]))
+
+
 pd.set_option('display.max_rows', None)
 pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
-with open(f"ptt{board}_{keys}.csv",'w',encoding='utf-8-sig') as file:
-    file.write(str(results))
-file.close()
-print(results)
+
+dataset = pd.DataFrame()
+for key in keys:
+    data = pd.read_csv(f'ptt{board}_{key}.csv',index_col=None)
+    dataset = pd.concat([dataset,data])
+dataset= dataset.drop_duplicates(['標題'])
+dataset.to_csv(f"ptt{board}_{keys}.csv",encoding='utf-8-sig',index=False)
+with open(f"ptt{board}_{keys}.csv",'a',encoding='utf-8-sig') as file:
+    file.write("共%d筆"%len(dataset))
 
 
 # #### 多層單關鍵字
@@ -89,8 +106,8 @@ def MultiFilter(result):
             key = input(f'輸入第{i+1}篩選字 : ')
             mask = result[0].str.contains(key)
             result = result[mask]
-            with open(f"ptt{board}_{key}.csv",'w',encoding='utf-8-sig') as file:
-                file.write(str(result))
+            result.to_csv(f"ptt{board}_{key}.csv",header=['標題'],encoding='utf-8-sig')
+            with open(f"ptt{board}_{key}.csv",'a',encoding='utf-8-sig') as file:
                 file.write("\n共%d筆"%len(result))
             print(result)
             print("共%d筆"%len(result))
@@ -101,8 +118,8 @@ result = df[mask]
 pd.set_option('display.max_rows', None)
 pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
-with open(f"ptt{board}_{key}.csv",'w',encoding='utf-8-sig') as file:
-    file.write(str(result))
+result.to_csv(f"ptt{board}_{key}.csv",encoding='utf-8-sig',header=['標題'])
+with open(f"ptt{board}_{key}.csv",'a',encoding='utf-8-sig') as file:
     file.write("\n共%d筆"%len(result))
 print(result)
 print("共%d筆"%len(result))
@@ -134,8 +151,8 @@ def GetContent():
     return file.write(ar_url+CONTENT)
     
 task = 'continue'
-with open(f"\Fulltext\ptt{board}_{target}.txt",'w',encoding='utf-8') as file: 
-    for page in range(pages):
+with open(f"ptt{board}_{target}.txt",'w',encoding='utf-8') as file: 
+    for page in range(900,pages):
         if task == 'continue':
             r = requests.get(url)
             soup = BeautifulSoup(r.text,"html.parser")
@@ -195,7 +212,7 @@ with open(f"ptt{board}_{target}.txt",'w',encoding='utf-8') as file:
         next_page_url = 'https://www.ptt.cc' + up_page_href
         url = next_page_url
         print(f'搜尋第{page+1}頁',end='')
-        NextPage()
+        
 
 
 # ----------------------------------------------
